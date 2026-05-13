@@ -6,6 +6,7 @@ export async function GET() {
     const result = await pool.query(`
       SELECT
         products.id AS product_id,
+        warehouses.id AS warehouse_id,
         products.name AS product_name,
         warehouses.name AS warehouse_name,
         inventory.total_stock,

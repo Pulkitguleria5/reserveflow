@@ -1,17 +1,62 @@
-async function getProducts() {
-  const response = await fetch(
-    "http://localhost:3000/api/products",
-    {
-      cache: "no-store",     // Ensure we always get fresh data
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function HomePage() {
+
+  const [products, setProducts] = useState([]);
+
+  const router = useRouter();
+
+  async function fetchProducts() {
+
+    const response = await fetch(
+      "/api/products"
+    );
+
+    const data = await response.json();
+
+    setProducts(data);
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  async function reserveProduct(
+    productId: number,
+    warehouseId: number
+  ) {
+
+    const response = await fetch(
+      "/api/reservations",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+          warehouseId,
+          quantity: 1,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+      alert(data.error);
+
+      return;
     }
-  );
 
-  return response.json();
-}
-
-export default async function HomePage() {
-
-  const products = await getProducts();
+    router.push(
+      `/reservation/${data.reservation.id}`
+    );
+  }
 
   return (
     <div className="p-10">
@@ -22,11 +67,13 @@ export default async function HomePage() {
 
       <div className="space-y-4">
 
-        {products.map((product: any, index: number) => (       // any is used here for simplicity, ideally you should define a proper type/interface for your products
+        {products.map((product: any) => (
+
           <div
-            key={index}
+            key={`${product.product_id}-${product.warehouse_name}`}
             className="border p-4 rounded-lg"
           >
+
             <h2 className="text-xl font-semibold">
               {product.product_name}
             </h2>
@@ -42,7 +89,21 @@ export default async function HomePage() {
               {" "}
               {product.available_stock}
             </p>
+
+            <button
+              onClick={() =>
+                reserveProduct(
+                  product.product_id,
+                  product.warehouse_id
+                )
+              }
+              className="mt-3 bg-black text-white px-4 py-2 rounded"
+            >
+              Reserve
+            </button>
+
           </div>
+
         ))}
 
       </div>
