@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { cleanupExpiredReservations }
+from "@/lib/cleanupExpiredReservations";
 
 export async function POST(request: NextRequest) {
 
   const client = await pool.connect();
 
   try {
+    await cleanupExpiredReservations();
 
     const body = await request.json();
 

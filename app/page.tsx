@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export default function HomePage() {
 
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
@@ -48,10 +49,12 @@ export default function HomePage() {
 
     if (!response.ok) {
 
-      alert(data.error);
+      setError(data.error);
 
       return;
     }
+
+    await fetchProducts();
 
     router.push(
       `/reservation/${data.reservation.id}`
@@ -64,6 +67,14 @@ export default function HomePage() {
       <h1 className="text-3xl font-bold mb-6">
         Products
       </h1>
+
+      {
+  error && (
+    <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+      {error}
+    </div>
+  )
+}
 
       <div className="space-y-4">
 

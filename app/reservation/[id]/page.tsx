@@ -19,6 +19,9 @@ export default function ReservationPage() {
   const [timeLeft, setTimeLeft] =
     useState("");
 
+    const [loading, setLoading] =
+  useState(false);
+
   async function fetchReservation() {
 
     const response = await fetch(
@@ -87,6 +90,7 @@ export default function ReservationPage() {
   }, [reservation]);
 
   async function confirmReservation() {
+    setLoading(true);
 
     const response = await fetch(
       `/api/reservations/${reservationId}/confirm`,
@@ -99,10 +103,13 @@ export default function ReservationPage() {
 
     alert(data.message || data.error);
 
+    setLoading(false);
+
     router.push("/");
   }
 
   async function cancelReservation() {
+    setLoading(true);
 
     const response = await fetch(
       `/api/reservations/${reservationId}/release`,
@@ -115,6 +122,7 @@ export default function ReservationPage() {
 
     alert(data.message || data.error);
 
+    setLoading(false);
     router.push("/");
   }
 
@@ -164,6 +172,7 @@ export default function ReservationPage() {
         <div className="flex gap-4 pt-4">
 
           <button
+          disabled={loading}
             onClick={confirmReservation}
             className="bg-green-600 text-white px-4 py-2 rounded"
           >
@@ -171,6 +180,7 @@ export default function ReservationPage() {
           </button>
 
           <button
+          disabled={loading}
             onClick={cancelReservation}
             className="bg-red-600 text-white px-4 py-2 rounded"
           >

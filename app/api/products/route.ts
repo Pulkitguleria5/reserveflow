@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { cleanupExpiredReservations }
+from "@/lib/cleanupExpiredReservations";
 
 export async function GET() {
   try {
+    await cleanupExpiredReservations();
+    
     const result = await pool.query(`
       SELECT
         products.id AS product_id,
