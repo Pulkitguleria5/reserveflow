@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import {
+  useParams,
+  useRouter
+} from "next/navigation";
 
-export default function ReservationPage(
-  context: any
-) {
+export default function ReservationPage() {
 
-    const params = context.params;
+    const params = useParams();
     const reservationId = params.id;
 
   const router = useRouter();
